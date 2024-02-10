@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    var canvas = document.getElementById('myCanvas');
+    var canvas = document.getElementById('game');
     var ctx = canvas.getContext('2d');
     const margin = 30;
     const cellSize = 120;
