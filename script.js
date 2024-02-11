@@ -2,26 +2,62 @@ document.addEventListener('DOMContentLoaded', function() {
     var canvas = document.getElementById('game');
     var ctx = canvas.getContext('2d');
     const margin = 30;
-    const cellSize = 120;
-    const rows = 6;
-    const cols = 9;
+    const cellSize = 100;
+    const rows = 8;
+    const cols = 12;
     const firstColor = '#E03616';
     const secondColor = '#FFF689';
     canvas.width = 2*margin + cellSize * cols;
     canvas.height = 2*margin + cellSize * rows;
 
-    // Initialize field
-    var field = Array(cols+1);
-    for (var i = 0; i < field.length; i++) {
-	field[i] = Array(rows+1);
-	for (var j = 0; j < field[i].length; j++) {
-	    if (i == 0 || i == cols || j == 0 || j == rows) {
-		field[i][j] = Math.floor(Math.random()*2)+1;
-	    } else {
-		field[i][j] = 0;
+    function mod(a, n) {
+	return ((a % n) + n) % n;
+    }
+
+    function checkSolvable(sequence) {
+	startPointer = sequence[0];
+	pointer = startPointer;
+	for (i = 1; i < sequence.length; i++) {
+	    if (sequence[i] == 1) {
+		if (mod(pointer, 4) == 1 || mod(pointer, 4) == 2) {
+		    pointer -= 1;
+		} else {
+		    pointer += 1;
+		}
+	    } else if (sequence[i] == 2) {
+		if (mod(pointer, 4) == 1 || mod(pointer, 4) == 2) {
+		    pointer += 1;
+		} else {
+		    pointer -= 1;
+		}
 	    }
 	}
+	return pointer == startPointer;
     }
+
+    // Initialize field
+    solvable = false;
+    while (!solvable) {
+	var field = Array(cols+1);
+	for (var i = 0; i < field.length; i++) {
+	    field[i] = Array(rows+1);
+	    for (var j = 0; j < field[i].length; j++) {
+		if (i == 0 || i == cols || j == 0 || j == rows) {
+		    field[i][j] = Math.floor(Math.random()*2)+1;
+		} else {
+		    field[i][j] = 0;
+		}
+	    }
+	}
+
+	sequence = [];
+	for (i = 0; i <= cols; i++)	sequence.push(field[i][0]);
+	for (i = 1; i <= rows; i++) sequence.push(field[cols][i]);
+	for (i = cols-1; i >= 0; i--) sequence.push(field[i][rows]);
+	for (i = rows-1; i >= 0; i--) sequence.push(field[0][i]);
+	solvable = checkSolvable(sequence);
+    }
+	
 
     // Initialize lines
     var lines = Array(cols);
